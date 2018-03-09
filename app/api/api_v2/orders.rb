@@ -63,7 +63,7 @@ module APIv2
       begin
         order = current_user.orders.find(params[:id])
         Ordering.new(order).cancel
-        present order, with: APIv2::Entities::Order
+        status 200
       rescue
         raise CancelOrderError, $!
       end

@@ -211,8 +211,7 @@ describe APIv2::Orders, type: :request do
         AMQPQueue.expects(:enqueue).with(:matching, action: 'cancel', order: order.to_matching_attributes)
         expect do
           api_post '/api/v2/order/delete', params: { id: order.id }, token: token
-          expect(response).to be_success
-          expect(JSON.parse(response.body)['id']).to eq order.id
+          expect(response.code).to eq '200'
         end.not_to change(Order, :count)
       end
     end
