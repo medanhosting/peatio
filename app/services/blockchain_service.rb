@@ -12,7 +12,11 @@ module BlockchainService
     # @param key [String, Symbol]
     #   The blockchain key.
     def [](key)
+      puts "======================= from blockchain services : #{key}"
       blockchain = Blockchain.find_by_key(key)
+
+      puts blockchain
+
       if blockchain.try(:client).present?
         "BlockchainService::#{blockchain.client.capitalize}"
       end.constantize.new(blockchain)

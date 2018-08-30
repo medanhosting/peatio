@@ -5,10 +5,12 @@ module WalletService
   class Bitcoind < Base
 
     def create_address(options = {})
+      puts "-----------------"
       @client.create_address!(options)
     end
 
     def collect_deposit!(deposit, options={})
+      puts "-----------------"
       destination_address = destination_wallet(deposit).address
       pa = deposit.account.payment_address
 

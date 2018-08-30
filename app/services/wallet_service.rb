@@ -13,6 +13,8 @@ module WalletService
     #   The wallet record in database.
     def [](wallet)
       wallet_service = wallet.gateway.capitalize
+      puts "============ from wallet service"
+      puts wallet_service
       "WalletService::#{wallet_service}"
         .constantize
         .new(wallet)
@@ -31,6 +33,7 @@ module WalletService
     end
 
     def collect_deposit!(deposit)
+      puts "=============== from wallet service collect deposit"
       method_not_implemented
     end
 
