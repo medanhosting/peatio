@@ -146,6 +146,8 @@ private
     end
 
     gon.bank_details_html = ENV['BANK_DETAILS_HTML']
+    gon.ranger_host = ENV["RANGER_HOST"] || "0.0.0.0"
+    gon.ranger_port = ENV["RANGER_PORT"] || "8081"
   end
 
   def set_language

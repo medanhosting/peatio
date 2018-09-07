@@ -9,6 +9,18 @@ module APIv2
       current_user or raise Peatio::Auth::Error
     end
 
+    def get_member
+      current_user rescue nil
+    end
+
+    def currency_icon_url(currency)
+      if currency.icon_url.blank?
+        "assets/#{currency.code}.svg"
+      else
+        currency.icon_url
+      end
+    end
+
     def deposits_must_be_permitted!
       if current_user.level < ENV.fetch('MINIMUM_MEMBER_LEVEL_FOR_DEPOSIT').to_i
         raise Error.new(text: 'Please, pass the corresponding verification steps to deposit funds.', status: 401)
@@ -121,6 +133,114 @@ module APIv2
         offset = [length - params[:limit], 0].max
         JSON.parse('[%s]' % redis.lrange(key, offset, -1).join(','))
       end
+    end
+
+    def trading_variables(member)
+      gon = OpenStruct.new
+      gon.environment = Rails.env
+      gon.local = I18n.locale
+      gon.market = current_market.attributes
+      gon.ticker = current_market.ticker
+      gon.markets = Market.enabled.each_with_object({}) { |market, memo| memo[market.id] = market.as_json }
+      gon.host = request.base_url
+      gon.pusher = {
+          key:       ENV.fetch('PUSHER_CLIENT_KEY'),
+          wsHost:    ENV.fetch('PUSHER_CLIENT_WS_HOST'),
+          httpHost:  ENV['PUSHER_CLIENT_HTTP_HOST'],
+          wsPort:    ENV.fetch('PUSHER_CLIENT_WS_PORT'),
+          wssPort:   ENV.fetch('PUSHER_CLIENT_WSS_PORT'),
+      }.reject { |k, v| v.blank? }
+                       .merge(encrypted: ENV.fetch('PUSHER_CLIENT_ENCRYPTED').present?)
+
+      gon.clipboard = {
+          :click => I18n.t('actions.clipboard.click'),
+          :done => I18n.t('actions.clipboard.done')
+      }
+
+      gon.i18n = {
+          ask: I18n.t('gon.ask'),
+          bid: I18n.t('gon.bid'),
+          cancel: I18n.t('actions.cancel'),
+          latest_trade: I18n.t('private.markets.order_book.latest_trade'),
+          switch: {
+              notification: I18n.t('private.markets.settings.notification'),
+              sound: I18n.t('private.markets.settings.sound')
+          },
+          notification: {
+              title: I18n.t('gon.notification.title'),
+              enabled: I18n.t('gon.notification.enabled'),
+              new_trade: I18n.t('gon.notification.new_trade')
+          },
+          time: {
+              minute: I18n.t('chart.minute'),
+              hour: I18n.t('chart.hour'),
+              day: I18n.t('chart.day'),
+              week: I18n.t('chart.week'),
+              month: I18n.t('chart.month'),
+              year: I18n.t('chart.year')
+          },
+          chart: {
+              price: I18n.t('chart.price'),
+              volume: I18n.t('chart.volume'),
+              open: I18n.t('chart.open'),
+              high: I18n.t('chart.high'),
+              low: I18n.t('chart.low'),
+              close: I18n.t('chart.close'),
+              candlestick: I18n.t('chart.candlestick'),
+              line: I18n.t('chart.line'),
+              zoom: I18n.t('chart.zoom'),
+              depth: I18n.t('chart.depth'),
+              depth_title: I18n.t('chart.depth_title')
+          },
+          place_order: {
+              confirm_submit: I18n.t('private.markets.show.confirm'),
+              confirm_cancel: I18n.t('private.markets.show.cancel_confirm'),
+              price: I18n.t('private.markets.place_order.price'),
+              volume: I18n.t('private.markets.place_order.amount'),
+              sum: I18n.t('private.markets.place_order.total'),
+              price_high: I18n.t('private.markets.place_order.price_high'),
+              price_low: I18n.t('private.markets.place_order.price_low'),
+              full_bid: I18n.t('private.markets.place_order.full_bid'),
+              full_ask: I18n.t('private.markets.place_order.full_ask')
+          },
+          trade_state: {
+              new: I18n.t('private.markets.trade_state.new'),
+              partial: I18n.t('private.markets.trade_state.partial')
+          }
+      }
+
+      gon.currencies = Currency.enabled.inject({}) do |memo, currency|
+        memo[currency.code] = {
+            code: currency.code,
+            symbol: currency.symbol,
+            isCoin: currency.coin?
+        }
+        memo
+      end
+      gon.display_currency = ENV.fetch('DISPLAY_CURRENCY')
+      gon.fiat_currencies = Currency.enabled.ordered.fiats.codes
+
+      gon.tickers = {}
+      Market.enabled.each do |market|
+        gon.tickers[market.id] = market.unit_info.merge(Global[market.id].ticker)
+      end
+
+      if member
+        gon.user = { sn: member.sn }
+        gon.accounts = member.accounts.enabled.includes(:currency).inject({}) do |memo, account|
+          memo[account.currency.code] = {
+              currency: account.currency.code,
+              balance: account.balance,
+              locked: account.locked
+          } if account.currency.try(:enabled)
+          memo
+        end
+      end
+
+      gon.bank_details_html = ENV['BANK_DETAILS_HTML']
+      gon.ranger_host = ENV["RANGER_HOST"] || "0.0.0.0"
+      gon.ranger_port = ENV["RANGER_PORT"] || "8081"
+      gon
     end
   end
 end
