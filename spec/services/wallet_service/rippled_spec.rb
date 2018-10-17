@@ -2,7 +2,7 @@
 
 describe 'WalletService::Ripple' do
   describe '#create_address!' do
-    let(:service) { WalletService[wallet] }
+    let(:service) { Peatio::WalletService[wallet] }
     let(:wallet) { Wallet.find_by_blockchain_key('xrp-testnet') }
     let(:create_address) { service.create_address }
 

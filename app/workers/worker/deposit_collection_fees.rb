@@ -23,7 +23,7 @@ module Worker
         return
       end
 
-      txid = WalletService[wallet].deposit_collection_fees(deposit)
+      txid = Peatio::WalletService[wallet].deposit_collection_fees(deposit)
       Rails.logger.warn { "The API accepted deposit collection fees transfer and assigned transaction ID: #{txid}." }
       AMQPQueue.enqueue(:deposit_collection, id: deposit.id)
       Rails.logger.warn { "Deposit collection job enqueue." }

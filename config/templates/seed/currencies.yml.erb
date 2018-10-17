@@ -120,4 +120,89 @@
     #
     # ERC20 configuration.
     erc20_contract_address: '0x0000000000000000000000000000000000000000' # Always wrap this value in quotes!
+
+- id:                   nxt
+  blockchain_key:       nxt-testnet
+  symbol:               'N'
+  type:                 coin
+  precision:            8
+  base_factor:          100_000_000
+  enabled:              true
+  quick_withdraw_limit: 1
+  # Deposits with less amount are skipped during blockchain synchronization.
+  # We advise to set value 10 times bigger than the network fee to prevent losses.
+  min_deposit_amount:   1
+  deposit_fee:          0
+  withdraw_fee:         0
+  options:              {}
+
+- id:                   testp
+  blockchain_key:       nxt-testnet
+  symbol:               'T'
+  type:                 coin
+  precision:            4
+  base_factor:          10_000   # IMPORTANT: Don't forget to update this variable according
+  enabled:              true
+  quick_withdraw_limit: 1
+  # Deposits with less amount are skipped during blockchain synchronization.
+  # We advise to set value 10 times bigger than the network fee to prevent losses.
+  min_deposit_amount:   1
+  deposit_fee:          0
+  withdraw_fee:         0
+  options:
+    #
+    # Currency configuration (Monetary System)
+    token_currency_id:    '2511604049436153688'
+
+- id:                   testa
+  blockchain_key:       nxt-testnet
+  symbol:               'T'
+  type:                 coin
+  precision:            6
+  base_factor:          1_000_000   # IMPORTANT: Don't forget to update this variable according
+  enabled:              true
+  quick_withdraw_limit: 1
+  # Deposits with less amount are skipped during blockchain synchronization.
+  # We advise to set value 10 times bigger than the network fee to prevent losses.
+  min_deposit_amount:   1
+  deposit_fee:          0
+  withdraw_fee:         0
+  options:
+    #
+    # Asset configuration
+    token_asset_id:    '14653464112776087970'
+
+- id:                   wcg
+  blockchain_key:       wcg-testnet
+  symbol:               'W'
+  type:                 coin
+  precision:            8
+  base_factor:          1_00_000_000   # IMPORTANT: Don't forget to update this variable according
+  enabled:              true
+  quick_withdraw_limit: 1
+  # Deposits with less amount are skipped during blockchain synchronization.
+  # We advise to set value 10 times bigger than the network fee to prevent losses.
+  min_deposit_amount:  0.01
+  deposit_fee:          0
+  withdraw_fee:         0
+  options:              {}
+
+- id:                   drt
+  blockchain_key:       wcg-testnet
+  symbol:               'D'
+  type:                 coin
+  precision:            4
+  base_factor:          10_000 # IMPORTANT: Don't forget to update this variable according
+  enabled:              true
+  quick_withdraw_limit: 1
+  # Deposits with less amount are skipped during blockchain synchronization.
+  # We advise to set value 10 times bigger than the network fee to prevent losses.
+  min_deposit_amount:  0.01
+  deposit_fee:          0
+  withdraw_fee:         0
+  options:
+    #
+    # Asset configuration
+    token_asset_id:    '7776054229687920460'
+
 <% end %>

@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 module WalletClient
-  class Geth < Base
+  class Geth < Peatio::WalletClient::Base
 
     def initialize(*)
       super
@@ -30,7 +30,7 @@ module WalletClient
                gasPrice: options.key?(:gas_price) ? '0x' + options[:gas_price].to_s(16) : nil
            }.compact]
       ).fetch('result').yield_self do |txid|
-        raise WalletClient::Error, \
+        raise Peatio::WalletClient::Error, \
           "#{wallet.name} withdrawal from #{normalize_address(issuer[:address])} to #{normalize_address(recipient[:address])} failed." \
             unless valid_txid?(normalize_txid(txid))
         normalize_txid(txid)
@@ -53,7 +53,7 @@ module WalletClient
                data: data
            }]
       ).fetch('result').yield_self do |txid|
-        raise WalletClient::Error, \
+        raise Peatio::WalletClient::Error, \
           "#{wallet.name} withdrawal from #{normalize_address(issuer[:address])} to #{normalize_address(recipient[:address])} failed." \
             unless valid_txid?(normalize_txid(txid))
         normalize_txid(txid)
@@ -63,7 +63,7 @@ module WalletClient
     def permit_transaction(issuer, recipient)
       json_rpc(:personal_unlockAccount, [normalize_address(issuer.fetch(:address)), issuer.fetch(:secret), 5]).tap do |response|
         unless response['result']
-          raise WalletClient::Error, \
+          raise Peatio::WalletClient::Error, \
             "#{wallet.name} withdrawal from #{normalize_address(issuer[:address])} to #{normalize_address(recipient[:address])} is not permitted."
         end
       end
@@ -113,7 +113,7 @@ module WalletClient
           'Content-Type' => 'application/json' }
       response.assert_success!
       response = JSON.parse(response.body)
-      response['error'].tap { |error| raise Error, error.inspect if error }
+      response['error'].tap { |error| raise Peatio::WalletClient::Error, error.inspect if error }
       response
     end
 

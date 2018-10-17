@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 class Deposit < ActiveRecord::Base
-  STATES = %i[submitted canceled rejected accepted collected].freeze
+  STATES = %i[submitted canceled rejected accepted collected pending].freeze
 
   include AASM
   include AASM::Locking
@@ -32,15 +32,17 @@ class Deposit < ActiveRecord::Base
     state :rejected
     state :accepted
     state :collected
+    state :pending
     event(:cancel) { transitions from: :submitted, to: :canceled }
-    event(:reject) { transitions from: :submitted, to: :rejected }
+    event(:reject) { transitions from: %i[submitted pending], to: :rejected }
     event :accept do
-      transitions from: :submitted, to: :accepted
+      transitions from: %i[submitted pending], to: :accepted
       after :plus_funds
     end
     event :dispatch do
       transitions from: :accepted, to: :collected
     end
+    event(:pending) { transitions from: :submitted, to: :pending }
   end
 
   def account
@@ -78,7 +80,7 @@ class Deposit < ActiveRecord::Base
 
   def collect!
     if coin?
-      if currency.is_erc20?
+      if currency.is_erc20? || currency.is_token_currency? || currency.is_token_asset?
         AMQPQueue.enqueue(:deposit_collection_fees, id: id)
       else
         AMQPQueue.enqueue(:deposit_collection, id: id)

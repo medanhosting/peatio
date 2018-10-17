@@ -114,7 +114,7 @@ class Currency < ActiveRecord::Base
   end
 
   nested_attr \
-    :erc20_contract_address
+    :erc20_contract_address, :token_currency_id, :token_asset_id
 
   def disabled?
     !enabled
@@ -122,6 +122,14 @@ class Currency < ActiveRecord::Base
 
   def is_erc20?
     erc20_contract_address.present?
+  end
+
+  def is_token_currency?
+    token_currency_id.present?
+  end
+
+  def is_token_asset?
+    token_asset_id.present?
   end
 
   def dependent_markets
@@ -143,7 +151,9 @@ class Currency < ActiveRecord::Base
   attr_readonly :id,
                 :code,
                 :type,
-                :erc20_contract_address
+                :erc20_contract_address,
+                :token_currency_id,
+                :token_asset_id
 end
 
 # == Schema Information

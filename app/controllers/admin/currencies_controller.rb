@@ -66,7 +66,9 @@ module Admin
           type
           base_factor
           precision
-          erc20_contract_address ]
+          erc20_contract_address
+          token_asset_id
+          token_currency_id ]
       end
 
       attributes

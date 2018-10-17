@@ -9,6 +9,35 @@ GIT
       multi_xml (~> 0.5)
       rack (>= 1.2, < 3)
 
+GIT
+  remote: https://github.com/skyach/peatio-core
+  revision: eb716ecc49b44120e9eb10e247e80cbaf8d796c1
+  branch: blockchain-wallet-service
+  specs:
+    peatio (0.4.3)
+      amqp
+      bunny
+      clamp
+      em-websocket
+      eventmachine
+      jwt
+      memoist (~> 0.16.0)
+      mysql2
+
+GIT
+  remote: https://github.com/skyach/peatio-nxt
+  revision: c3dd88b7b160561e6b3ef452fc7ed00204d14180
+  specs:
+    peatio-nxt (0.1.0)
+      peatio (~> 0.4.3)
+
+GIT
+  remote: https://github.com/skyach/peatio-wcg
+  revision: cb0ac2b1356fb212917b3d9499b697f707618374
+  specs:
+    peatio-wcg (0.1.0)
+      peatio (~> 0.4.3)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -241,14 +270,6 @@ GEM
     parser (2.5.3.0)
       ast (~> 2.4.0)
     passgen (1.0.2)
-    peatio (0.4.4)
-      amqp
-      bunny
-      clamp
-      em-websocket
-      eventmachine
-      jwt
-      mysql2
     popper_js (1.14.3)
     powerpack (0.1.2)
     pry (0.11.3)
@@ -460,7 +481,9 @@ DEPENDENCIES
   omniauth-barong (~> 0.1.4)
   omniauth-google-oauth2 (~> 0.5.3)
   passgen (~> 1.0.2)
-  peatio (~> 0.4.3)
+  peatio!
+  peatio-nxt!
+  peatio-wcg!
   pry-byebug (~> 3.6)
   puma (~> 3.11.4)
   quiet_assets (~> 1.1)

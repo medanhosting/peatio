@@ -57,7 +57,7 @@ gem 'jwt-multisig', '~> 1.0.0'
 gem 'cash-addr', '~> 0.1.1', require: 'cash_addr'
 gem 'digest-sha3', '~> 1.1.0'
 gem 'scout_apm', '~> 2.4', require: false
-gem 'peatio', '~> 0.4.3'
+gem 'peatio', git: 'https://github.com/skyach/peatio-core', branch: 'blockchain-wallet-service'
 
 group :development, :test do
   gem 'faker',        '~> 1.8'

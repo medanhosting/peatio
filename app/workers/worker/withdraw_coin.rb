@@ -37,7 +37,7 @@ module Worker
 
         currency = withdraw.currency
 
-        wallet_service = WalletService[wallet]
+        wallet_service = Peatio::WalletService[wallet]
         # TODO: we load balance of hot, warm and cold wallets
         # balance = wallet_service.load_balance(currency)
 
